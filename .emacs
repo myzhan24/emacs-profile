@@ -1,167 +1,160 @@
-;; automatically install required packages
-;;; Required packages
-;;; everytime emacs starts, it will automatically check if those packages are
-;;; missing, it will install them automatically
-;; (when (not package-archive-contents)
-;;   (package-refresh-contents))
-;; (defvar tmtxt/packages
-;;   '(package1 package2 package3 package4 package5))
-;; (dolist (p tmtxt/packages)
-;;   (when (not (package-installed-p p))
-;;     (package-install p)))
+(require 'package)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
 
-;; keybinds
-(global-set-key (kbd "C-x v") 'clipboard-yank) ;normal paste
-(global-set-key (kbd "C-x c") 'compile) ;; Ctrl+x + c
-(global-set-key (kbd "C-x n") 'linum-mode) ;; enable line numbers
-;(global-set-key (kbd "C-x C-;") 'comment-or-uncomment-region)
-;;(global-set-key (kbd "C-x C=") 'uncomment-region)
+(setq gc-cons-threshold 100000000)
+(setq inhibit-startup-message t)
 
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-;;
-;;ECB
-;;
-;; https://truongtx.me/2013/03/10/ecb-emacs-code-browser/c
-;;
-;;Emacs Package Manager
-;;; Emacs is not a package manager, and here we load its package manager!
-;; (require 'package)
-;; (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
-;;                   ("elpa" . "http://tromey.com/elpa/")
-;;                   ;; TODO: Maybe, use this after emacs24 is released
-;;                   ;; (development versions of packages)
-;;                   ("melpa" . "http://melpa.milkbox.net/packages/")
-;;                   ))
-;;   (add-to-list 'package-archives source t))
-;; (package-initialize)
+(defconst demo-packages
+  '(anzu
+    company
+    duplicate-thing
+    ggtags
+    helm
+    helm-gtags
+    helm-projectile
+    helm-swoop
+    ;; function-args
+    clean-aindent-mode
+    comment-dwim-2
+    dtrt-indent
+    ws-butler
+    iedit
+    yasnippet
+    smartparens
+    projectile
+    volatile-highlights
+    undo-tree
+    zygospore))
 
-;; ;; activate ecb
-;; (require 'ecb)
-;; (require 'ecb-autoloads)
-
-;; ;;basic ecb configurations
-;; (setq ecb-layout-name "layout-name")
-
-;; ;; show source files in directories buffer
-;; (setq ecb-show-sources-in-directories-buffer 'always)
-
-;; ;; persistent compile window
-;; (setq ecb-compile-window-height 12)
-
-;; ;; ECB Keybinds
-;; ;;; activate and deactivate ecb
-;; (global-set-key (kbd "C-x C-;") 'ecb-activate)
-;; (global-set-key (kbd "C-x C-'") 'ecb-deactivate)
-;; ;;; show/hide ecb window
-;; (global-set-key (kbd "C-;") 'ecb-show-ecb-windows)
-;; (global-set-key (kbd "C-'") 'ecb-hide-ecb-windows)
-;; ;;; quick navigation between ecb windows
-;; (global-set-key (kbd "C-)") 'ecb-goto-window-edit1)
-;; (global-set-key (kbd "C-!") 'ecb-goto-window-directories)
-;; (global-set-key (kbd "C-@") 'ecb-goto-window-sources)
-;; (global-set-key (kbd "C-#") 'ecb-goto-window-methods)
-;; (global-set-key (kbd "C-$") 'ecb-goto-window-compilation)
-
-
-
-;;load paths
-(add-to-list 'load-path "~/.emacs.d/cygwin") 
-(add-to-list 'load-path "~/.emacs.d/custom")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-
-;;load Custom Theme
-(load-theme 'monokai t)
-
-;;installation for cygwin-mount.el
-(require 'cygwin-mount)
-(cygwin-mount-activate)
-
-;;installation for setup-cygwin.el
-(require 'setup-cygwin)
-
-;;intstallation for air
-;;http://www.emacswiki.org/emacs/AutoPairs
-(require 'autopair)
-(autopair-global-mode) ;; to enable in all buffers
-
-;;auto-complete.el
-;;http://www.emacswiki.org/emacs/auto-complete.el
-(require 'auto-complete)
-(global-auto-complete-mode t)
-
-;;Installation for auto complete extension
-;;http://emacswiki.org/emacs/auto-complete-extension.el
-(require 'auto-complete-extension)
-
-
-;;Rainbow delimiters
-(require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode);
-
-;;enable C-x C-u and C-x C-l to upper and lowercase selections
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
-;;change default compile-command to g++
-(setq compile-command "g++ ")
-
-;;automatic indentation
-;;(add-hook 'c-mode-common-hook '(lambda () (c-toggle-auto-state 1)))
-
-;;code beautifying
-;;http://www.emacswiki.org/emacs/CodeBeautifying
-(defun dka-fix-comments ()
-  "Move through the entire buffer searching for comments that begin with
-    \"//\" and fill them appropriately.  That means if comments start too
-    close to the end of line (20 less than the fill-column) move the
-    entire comment on a line by itself."
+(defun install-packages ()
+  "Install all required packages."
   (interactive)
-  (save-excursion
-    (beginning-of-buffer)
-    (while (search-forward "//")
-      (lisp-indent-for-comment)
-      ;; when the comment is deemed to be too close to the end of the
-      ;; line, yank it and put it on the previous line before filling
-      (while (< (- fill-column 20) (- (current-column) 3))
-	(search-backward "//")
-	(kill-line)
-	(beginning-of-line)
-	(yank)
-	(insert "\n"))
-      ;; now fill the lines that are too long
-      (if (and (not (end-of-line))
-	       (< fill-column (current-column)))
-	  (c-fill-paragraph)))))
+  (unless package-archive-contents
+    (package-refresh-contents))
+  (dolist (package demo-packages)
+    (unless (package-installed-p package)
+      (package-install package))))
 
-;;custom compile command
-;;emacswiki.org/emacs/CompileCommand
-(require 'compile)
- (add-hook 'c-mode-hook
-           (lambda ()
-	     (unless (file-exists-p "Makefile")
-	       (set (make-local-variable 'compile-command)
-                    ;; emulate make's .c.o implicit pattern rule, but with
-                    ;; different defaults for the CC, CPPFLAGS, and CFLAGS
-                    ;; variables:
-                    ;; $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $<
-		    (let ((file (file-name-nondirectory buffer-file-name)))
-                      (format "%s -c -o %s.o %s %s %s"
-                              (or (getenv "CC") "gcc")
-                              (file-name-sans-extension file)
-                              (or (getenv "CPPFLAGS") "-DDEBUG=9")
-                              (or (getenv "CFLAGS") "-ansi
-			      -pedantic -Wall -g") file))))))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("27821e324592a0f6348fe64f3c8f40846cbf81625673f6eab912e07f8aebc047" "26f0aa041825d6a1e934f1274be62a02a753ecfa0d1caec0057f261c34301ff8" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+(install-packages)
+
+;; this variables must be set before load helm-gtags
+;; you can change to any prefix key of your choice
+(setq helm-gtags-prefix-key "\C-cg")
+
+(add-to-list 'load-path "~/.emacs.d/custom")
+
+(require 'setup-helm)
+(require 'setup-helm-gtags)
+;; (require 'setup-ggtags)
+(require 'setup-cedet)
+(require 'setup-editing)
+
+(windmove-default-keybindings)
+
+;; function-args
+;; (require 'function-args)
+;; (fa-config-default)
+;; (define-key c-mode-map  [(tab)] 'company-complete)
+;; (define-key c++-mode-map  [(tab)] 'company-complete)
+
+;; company
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(delete 'company-semantic company-backends)
+(define-key c-mode-map  [(tab)] 'company-complete)
+(define-key c++-mode-map  [(tab)] 'company-complete)
+;; (define-key c-mode-map  [(control tab)] 'company-complete)
+;; (define-key c++-mode-map  [(control tab)] 'company-complete)
+
+;; company-c-headers
+(add-to-list 'company-backends 'company-c-headers)
+
+;; hs-minor-mode for folding source code
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+;; Available C style:
+;; “gnu”: The default style for GNU projects
+;; “k&r”: What Kernighan and Ritchie, the authors of C used in their book
+;; “bsd”: What BSD developers use, aka “Allman style” after Eric Allman.
+;; “whitesmith”: Popularized by the examples that came with Whitesmiths C, an early commercial C compiler.
+;; “stroustrup”: What Stroustrup, the author of C++ used in his book
+;; “ellemtel”: Popular C++ coding standards as defined by “Programming in C++, Rules and Recommendations,” Erik Nyquist and Mats Henricson, Ellemtel
+;; “linux”: What the Linux developers use for kernel development
+;; “python”: What Python developers use for extension modules
+;; “java”: The default style for java-mode (see below)
+;; “user”: When you want to define your own style
+(setq
+ c-default-style "linux" ;; set style to "linux"
  )
+
+(global-set-key (kbd "RET") 'newline-and-indent)  ; automatically indent when press RET
+
+;; activate whitespace-mode to view all whitespace characters
+(global-set-key (kbd "C-c w") 'whitespace-mode)
+
+;; show unncessary whitespace that can mess up your diff
+(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
+
+;; use space to indent by default
+(setq-default indent-tabs-mode nil)
+
+;; set appearance of a tab that is represented by 4 spaces
+(setq-default tab-width 4)
+
+;; Compilation
+(global-set-key (kbd "<f5>") (lambda ()
+                               (interactive)
+                               (setq-local compilation-read-command nil)
+                               (call-interactively 'compile)))
+
+;; setup GDB
+(setq
+ ;; use gdb-many-windows by default
+ gdb-many-windows t
+
+ ;; Non-nil means display source file containing the main routine at startup
+ gdb-show-main t
+ )
+
+;; Package: clean-aindent-mode
+(require 'clean-aindent-mode)
+(add-hook 'prog-mode-hook 'clean-aindent-mode)
+
+;; Package: dtrt-indent
+(require 'dtrt-indent)
+(dtrt-indent-mode 1)
+
+;; Package: ws-butler
+(require 'ws-butler)
+(add-hook 'prog-mode-hook 'ws-butler-mode)
+
+;; Package: yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;; Package: smartparens
+(require 'smartparens-config)
+(setq sp-base-key-bindings 'paredit)
+(setq sp-autoskip-closing-pair 'always)
+(setq sp-hybrid-kill-entire-symbol nil)
+(sp-use-paredit-bindings)
+
+(show-smartparens-global-mode +1)
+(smartparens-global-mode 1)
+
+;; Package: projejctile
+(require 'projectile)
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+
+(require 'helm-projectile)
+(helm-projectile-on)
+(setq projectile-completion-system 'helm)
+(setq projectile-indexing-method 'alien)
+
+;; Package zygospore
+(global-set-key (kbd "C-x 1") 'zygospore-toggle-delete-other-windows)
