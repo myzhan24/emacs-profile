@@ -1,3 +1,35 @@
+;; keybinds
+(global-set-key (kbd "C-x v") 'clipboard-yank) ;normal paste
+(global-set-key (kbd "C-x c") 'compile) ;; Ctrl+x + c
+(global-set-key (kbd "C-x n") 'linum-mode) ;; enable line numbers
+
+
+;;change default compile-command to g++
+;;(setq compile-command "g++ ")
+
+
+;;load paths
+(add-to-list 'load-path "~/.emacs.d/cygwin")
+(add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
+;;load Custom Theme
+(load-theme 'monokai t)
+
+;;Rainbow delimiters
+;; (require 'rainbow-delimiters)
+;; (add-hook 'prog-mode-hook 'rainbow-delimiters-mode);
+
+
+;; ;;installation for cygwin-mount.el
+;; (require 'cygwin-mount)
+;; (cygwin-mount-activate)
+
+;; ;;installation for setup-cygwin.el
+;; (require 'setup-cygwin)
+
+;; https://tuhdo.github.io/c-ide.html
+;; init.el for C/C++ Development Environment for Emacs
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
