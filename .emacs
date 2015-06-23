@@ -1,7 +1,3 @@
-;; keybinds
-(global-set-key (kbd "C-x v") 'clipboard-yank) ;normal paste
-(global-set-key (kbd "C-x c") 'compile) ;; Ctrl+x + c
-(global-set-key (kbd "C-x n") 'linum-mode) ;; enable line numbers
 
 
 ;;change default compile-command to g++
@@ -77,7 +73,7 @@
 ;; you can change to any prefix key of your choice
 (setq helm-gtags-prefix-key "\C-cg")
 
-(add-to-list 'load-path "~/.emacs.d/custom")
+;;(add-to-list 'load-path "~/.emacs.d/custom")
 
 (require 'setup-helm)
 (require 'setup-helm-gtags)
@@ -190,3 +186,7 @@
 
 ;; Package zygospore
 (global-set-key (kbd "C-x 1") 'zygospore-toggle-delete-other-windows)
+;; keybinds
+(global-set-key (kbd "C-x v") 'clipboard-yank) ;normal paste
+(global-set-key (kbd "C-x c") 'compile)
+(global-set-key (kbd "C-x n") 'linum-mode) ;; enable line numbers
