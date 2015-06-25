@@ -1,5 +1,3 @@
-
-
 ;;change default compile-command to g++
 ;;(setq compile-command "g++ ")
 
