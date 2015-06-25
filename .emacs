@@ -1,3 +1,6 @@
+;; portable emacs profile for C/C++ development
+
+
 ;;change default compile-command to g++
 ;;(setq compile-command "g++ ")
 
