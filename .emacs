@@ -1,3 +1,30 @@
+
+
+;;change default compile-command to g++
+;;(setq compile-command "g++ ")
+
+
+;;load paths
+(add-to-list 'load-path "~/.emacs.d/cygwin")
+(add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
+;;load Custom Theme
+(load-theme 'monokai t)
+
+;;Rainbow delimiters
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode);
+
+;; ;;installation for cygwin-mount.el
+;; (require 'cygwin-mount)
+;; (cygwin-mount-activate)
+
+;; ;;installation for setup-cygwin.el
+;; (require 'setup-cygwin)
+
+;; https://tuhdo.github.io/c-ide.html
+;; init.el for C/C++ Development Environment for Emacs
 (require 'package)
 (add-to-list 'package-archives
          '("melpa" . "http://melpa.milkbox.net/packages/") t)
@@ -45,9 +72,10 @@
 ;; you can change to any prefix key of your choice
 (setq helm-gtags-prefix-key "\C-cg")
 
-(add-to-list 'load-path "~/.emacs.d/custom")
+;;(add-to-list 'load-path "~/.emacs.d/custom")
 
 (require 'setup-helm)
+;; commented out this next line because it was causing save errors
 ;; (require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
 (require 'setup-cedet)
@@ -158,3 +186,8 @@
 
 ;; Package zygospore
 (global-set-key (kbd "C-x 1") 'zygospore-toggle-delete-other-windows)
+;; keybinds
+(global-set-key (kbd "C-x v") 'clipboard-yank) ;normal paste
+(global-set-key (kbd "C-x c") 'compile)
+(global-set-key (kbd "C-x n") 'linum-mode) ;; enable line numbers
+(global-set-key (kbd "C-x C-;") 'comment-indent) ;add comment to end of line
