@@ -9,9 +9,14 @@
 (add-to-list 'load-path "~/.emacs.d/cygwin")
 (add-to-list 'load-path "~/.emacs.d/custom")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/moe-theme")
+(add-to-list 'load-path "~/.emacs.d/themes/moe-theme")
+
 
 ;;load Custom Theme
-(load-theme 'monokai t)
+;; (load-theme 'monokai t)
+(require 'moe-theme)
+(moe-light)
 
 ;;Rainbow delimiters
 (require 'rainbow-delimiters)
